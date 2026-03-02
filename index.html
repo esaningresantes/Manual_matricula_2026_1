@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruccionas para la Matrícula Virtual 2026-1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style> body { background-color: #0f172a; color: #e2e8f0; font-family: 'Montserrat', sans-serif; } h1, h2, h3, h4 { font-family: 'Playfair Display', serif; } .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); } .active-tab { 
+    background: #dc2626;  /* rojo */
+    color: white; 
+    font-weight: bold; 
+    border-left: 4px solid white; 
+}::-webkit-scrollbar { width: 6px; background: #0f172a; } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; } </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <aside class="w-full md:w-72 bg-slate-900 border-r border-slate-800 flex flex-col z-20 shadow-2xl">
+        <div class="p-6 border-b border-slate-800 flex items-center gap-3 cursor-pointer" onclick="renderContent('welcome')">
+            <div class="w-10 h-10 bg-red-600 rounded flex items-center justify-center text-2xl font-bold text-slate-900">UE</div>
+            <div>
+                <h1 class="text-white text-lg leading-none">Esan University</h1>
+                <p class="text-[10px] text-rellow-600 uppercase tracking-widest">Ciclo 2026-1</p>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto py-2" id="menu-container"></div>
+        <div class="p-4 text-center text-xs text-slate-500 bg-slate-950">
+            Documento Oficial
+
+        </div>
+    </aside>
+
+    <main class="flex-1 relative bg-gradient-to-br from-slate-900 to-[#050a15] overflow-hidden flex flex-col">
+        <div class="h-16 border-b border-slate-800 flex items-center px-6 gap-4 bg-slate-900/90 backdrop-blur z-10">
+            <i data-lucide="search" class="text-slate-500"></i>
+            <input type="text" id="search" placeholder="Buscar (ej: matrícula, cronograma, escala)..." class="bg-transparent w-full text-white focus:outline-none placeholder-slate-600">
+        </div>
+        
+        <div id="viewer" class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth"></div>
+    </main>
+
+    <script>
+        // --- BASE DE DATOS ---
+        const db = {
+            welcome: {
+    title: "Inicio",
+    icon: "home",
+    html: `
+    <div class="max-w-4xl mx-auto text-center animate-[fadeIn_0.5s]">
+        <div class="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-8 shadow-2xl border border-slate-700">
+            <img src="https://www.esan.edu.pe/images/blog/2018/04/10/esan-fachada-licenciamiento-facebook.jpg"
+                 class="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700" 
+                 alt="Universidad ESAN">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+            <div class="absolute top-0 left-0 p-8 text-left">
+                <span class="bg-red-600 text-slate-900 text-xs font-bold px-2 py-1 rounded uppercase">Ciclo 2026-1</span>
+                <h2 class="text-4xl text-white font-bold mt-2">Bienvenidos a la Excelencia</h2>
+            </div>
+        </div>
+        <h1 class="text-3xl text-white font-serif mb-4">Instruccionas para la Matrícula Virtual 2026-1</h1>
+        <p class="text-slate-400 mb-8">
+            En este catálogo interactivo encontrarás la información detallada de los documentos oficiales: matrículas, pagos, descuento, calendario académido y mucho más.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+
+            <!-- I -->
+            <button onclick="renderContent('I')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">📝 I. Matrícula</h3>
+                <p class="text-xs text-slate-400">Proceso de matrícula de estudiantes.</p>
+            </button>
+
+            <!-- II -->
+            <button onclick="renderContent('II')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">📋 II. Pasos de la matrícula</h3>
+                <p class="text-xs text-slate-400">Pasos a seguir para una matrícula efectiva.</p>
+            </button>
+
+            <!-- III -->
+            <button onclick="renderContent('III')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">💰 II. Escalas de pago</h3>
+                <p class="text-xs text-slate-400">Valor por crédito y cálculo de pensiones.</p>
+            </button>
+
+
+            <!-- IV -->
+            <button onclick="renderContent('IV')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">💳 IV. Cobros académicos</h3>
+                <p class="text-xs text-slate-400">Boletas, medios de pago y reportes.</p>
+            </button>
+
+            <!-- V -->
+            <button onclick="renderContent('V')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">🎁 V. Descuento</h3>
+                <p class="text-xs text-slate-400">Descuento por pronto pago.</p>
+            </button>
+
+
+            <!-- VI -->
+            <button onclick="renderContent('VI')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">📅 VI. Horario y Turno</h3>
+                <p class="text-xs text-slate-400">Como encontrar tu horario y turno de matrícula.</p>
+            </button>
+
+            <!-- VII -->
+            <button onclick="renderContent('VII')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">🧾 VII. Retiros</h3>
+                <p class="text-xs text-slate-400">Trámites para cada tipo de retiro.</p>
+            </button>
+
+            <!-- VIII -->
+            <button onclick="renderContent('VIII')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">☎️ VIII. Directorio</h3>
+                <p class="text-xs text-slate-400">Correos y anexos de contacto.</p>
+            </button>
+
+            <!-- IX -->
+            <button onclick="renderContent('IX')" class="glass p-4 rounded-xl hover:bg-slate-800 transition border-l-4 border-emerald-500">
+                <h3 class="font-bold text-white">📅 IX. Calendario académico</h3>
+                <p class="text-xs text-slate-400">Fechas clave del ciclo 2026-1.</p>
+            </button>
+        </div>
+    </div>`
+},
+
+            // I. MATRÍCULA
+I: {
+    title: "I. Matrícula",
+    icon: "file-check",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">I. Matrícula</h2>
+        <div class="glass p-8 rounded-xl space-y-6 text-slate-300">
+
+            <p class="text-lg">
+            El sistema de matrícula se caracteriza por permitir al estudiante la elección de cursos y horarios
+            con cierto margen. A la matrícula se accede según el turno u orden de prioridad, el cual considera
+            las <strong>notas obtenidas en las asignaturas del ciclo inmediato anterior y el número de créditos
+            acumulados por el alumno</strong>, otorgándoles la primera prioridad a los alumnos que tengan por
+            cursar a lo más 30 créditos para culminar sus estudios. <strong>(Art 16° del Reglamento de Estudios)</strong>
+            </p>
+
+            <p class="font-semibold text-red">Sugerimos a los estudiantes:</p>
+            <ul class="list-disc pl-6 space-y-1">
+                <li> Analizar cuidadosamente su propia situación académica.</li>
+                <li> Reflexionar sobre sus metas de estudio.</li>
+                <li> Asesorarse con los profesores.</li>
+                <li> Tomar en cuenta las normas y contenidos en este documento.</li>
+            </ul>
+
+           <p class="text-lg">
+             La matrícula es responsabilidad del alumno, quien para realizarla deberá tener en cuenta las
+             normas vigentes. Una vez efectuada solamente se podrá gestionar modificaciones a la misma por
+             cierre de asignaturas. El alumno será responsable de que en su matrícula no se produzcan cruce
+             de horarios de clases. 
+             <a href="https://transparenciauniversitaria.esan.edu.pe/wp-content/uploads/2025/03/Reglam_Estudios_de_Pregrado_29.01.2025.pdf" target="_blank" class="text-green-400 underline font-semibold">
+             (Art 22° del Reglamento de Estudios)
+             </a>
+             </p>
+
+            <p class="font-bold text-red-600">Cursos Obligatorios</p>
+
+            <ul class="list-disc pl-6 space-y-1">
+                <li> Los alumnos deberán matricularse en los cursos obligatorios que hayan desaprobado en el
+                ciclo ordinario inmediatamente siguiente. <a href="https://transparenciauniversitaria.esan.edu.pe/wp-content/uploads/2025/03/Reglam_Estudios_de_Pregrado_29.01.2025.pdf" target="_blank" class="text-green-400 underline font-semibold">(Art 18° del Reglamento de Estudios)</li></a>
+                <li> El alumno sólo podrá matricularse en asignaturas obligatorias de hasta tres ciclos
+                consecutivos, salvo en casos de traslados. <a href="https://transparenciauniversitaria.esan.edu.pe/wp-content/uploads/2025/03/Reglam_Estudios_de_Pregrado_29.01.2025.pdf" target="_blank" class="text-green-400 underline font-semibold">(Art 20° del Reglamento de Estudios)</li></a>
+            </ul>
+
+            <p class="font-bold text-red-600">Cursos Electivos</p>
+            <p>
+            Los planes de estudio de todas las carreras consideran una determinada cantidad de créditos en
+            cursos electivos de formación y especialidad. La decisión de matricularse en estos cursos
+            corresponde al estudiante, siempre que cumpla con los requisitos correspondientes y demás
+            normas de matrícula. Si un estudiante lo desea, puede seleccionar una mayor cantidad de cursos
+            electivos de los que establece su plan de estudios.
+            </p>
+
+            <ul class="list-disc pl-6 space-y-1">
+                <li> Se recomienda revisar su plan de estudios publicado en la UEvirtual para verificar la
+                cantidad de cursos electivos de formación y especialidad que debe aprobar.</li>
+            </ul>
+
+            <p>
+            Asimismo, debe revisar su Portal Académico para verificar los cursos electivos aprobados
+            hasta la fecha.
+            </p>
+
+
+            <p class="font-bold text-red-600">Cierre de cursos</p>
+            <p>
+            La Universidad se reserva el derecho de cerrar asignaturas una vez concluida la matrícula,
+            cuando el número de alumnos matriculados no sea superior a doce (12).
+            </p>
+
+            <p>
+            En los cursos en que no se alcance el número mínimo de matriculados, los estudiantes se
+            podrán registrar en otro curso siempre que existan vacantes disponibles.
+            </p>
+
+            <p>
+            La Oficina de Servicios Académicos enviará un correo al alumno informándole del cierre de
+            secciones.
+            </p>
+
+<h3 class="text-xl text-red-600 font-serif mb-3">
+                    Track de Inglés
+                </h3>
+
+                <p>
+                    La aprobación de la acreditación de conocimiento del idioma inglés es uno de los requisitos
+                    citados en el Reglamento de Grados y Títulos para ser considerado egresado.
+                </p>
+
+                <p>
+                    <a href="https://secretariageneral.esan.edu.pe/images/documentos/Reglamentos/Reglam_Estudios_de_Pregrado_29.01.2025.pdf"
+                       target="_blank"
+                       class="text-green-400 hover:underline font-semibold">
+                       Ver Reglamento de Estudios
+                    </a>
+                </p>
+
+                <p>
+                    <a href="https://uevirtual.ue.edu.pe/intranet/images/04-Reglamentos/2024/Resoluci%C3%B3n_N002-2024_VRA_2.pdf"
+                       target="_blank"
+                       class="text-green-400 hover:underline font-semibold">
+                       Ver Resolución de Acreditación de Conocimiento de Idioma Inglés
+                    </a>
+                </p>
+
+
+            <p class="font-bold text-red-600">Sólo podrá matricularse virtualmente si:</p>
+            <ul class="list-disc pl-6 space-y-1">
+                <li>No presenta deudas de libros con biblioteca (CENDOC).</li>
+                <li>No tiene deudas pendientes con el área de Finanzas Pregrado o no han cumplido con su compromiso de pago.</li>
+                <li>Efectuó el pago de la primera boleta hasta la fecha de <strong>vencimiento (16 de diciembre).</strong></li>
+                <li>No tiene asuntos pendientes con Servicios Académicos (Haber presentado retiro definitivo, estar en condición de baja académica, no haber asistido a las reuniones del Comité de Disciplina, etc).</li>
+            </ul>
+
+            <p class="font-bold text-red-600">Requerimientos técnicos</p>
+            <p>
+            Para poder registrar la matrícula virtual deberá asegurarse de que su equipo cumpla con las
+            siguientes especificaciones técnicas:
+            </p>
+
+            <p class="font-semibold text-white">Software:</p>
+            <ol class="list-decimal pl-6 space-y-1">
+            <li>Sistema Operativo: Windows XP o superior (Vista, 7, 8) GNU/Linux</li>
+            <li>Navegador actualizado Mozilla 7.0 ó superior. Navegador Google Chrome, Navegador IE 9.0 como última opción</li>
+            </ol>
+
+
+            <p class="font-semibold text-white">Hardware:</p>
+            <ol class="list-disc pl-6 space-y-1">
+                <li>Procesador Core 2 Duo o superior.</li>
+                <li>Memoria de 1GB o superior.</li>
+                <li>De preferencia impresora para poder imprimir la ficha de matrícula.</li>
+            </ol>
+
+            <p class="font-semibold text-white">Recomendaciones:</p>
+            <p>
+            Si su conexión de Internet es inalámbrica, asegúrese que no haya otro miembro de su entorno
+            utilizando el internet bajando videos o escuchando música mientras Ud. realice la matrícula.
+            </p>
+
+        </div>
+    </div>`
+},
+
+           // II. PASOS DE LA MATRÍCULA
+II: {
+    title: "II. Pasos de la matrícula",
+    icon: "file-check",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">II. Pasos de la Matrícula</h2>
+
+        <div class="glass p-8 rounded-xl space-y-6 text-slate-300">
+
+            <p class="text-lg font-semibold text-white">
+            Procedimiento para registrar la matrícula virtual:
+            </p>
+
+            <ol class="list-decimal pl-6 space-y-4">
+
+                <li>
+                Obtenga la información para la matrícula vía Internet en la plataforma UeVirtual.
+                Asegúrese de haber efectuado el pago de su anticipo o de su primera boleta para estar habilitado.
+                Consultas: <a href="mailto:finanzaspregrado@ue.edu.pe" class="text-green-600 hover:underline font-semibold">
+        finanzaspregrado@ue.edu.pe.
+    </a>
+</li>
+
+                <li>
+                Respecto a los libros prestados por biblioteca (CENDOC). Cualquier problema o consulta realizarla al Sr. Oscar Pilco
+                (<a href="mailto:opilco@esan.edu.pe" class="text-green-600 hover:underline font-semibold">opilco@esan.edu.pe</a> y/o al Sr. Alfredo Mendoza <a href="mailto:amendoza@esan.edu.pe" class="text-green-600 hover:underline font-semibold"> amendoza@esan.edu.pe).</a>
+                </li>
+
+                <li>
+                Asegúrese de no tener asuntos académicos pendientes que imposibiliten su matrícula
+(haber desaprobado 3 veces una misma asignatura, no haber asistido a las citaciones del
+Comité de Disciplina, etc). Cualquier problema o consulta sobre este punto, realizarla al correo
+de Servicios Académicos (<a href="mailto:ssacad@ue.edu.pe" class="text-green-600 hover:underline font-semibold"> ssacad@ue.edu.pe).</a>
+                </li>
+
+                <li>
+                Para efectuar su matrícula en internet ingrese a:
+                <a href="http://matriculavirtual.ue.edu.pe/" target="_blank" class="text-red-600 underline font-semibold">
+                http://matriculavirtual.ue.edu.pe/
+                </a>
+                en el
+día y la hora que le corresponda según su turno de matrícula. Sólo podrá acceder al sistema
+de matrícula a partir de la hora y fecha indicadas en su turno de matrícula. De ninguna forma
+podrá acceder antes y si por cualquier razón no pudo ingresar al sistema en la fecha indicada,
+podrá matricularse al día siguiente desde las <strong>10:00 hrs.</strong> hasta las <strong>17:00 hrs.</strong> mientras se
+encuentre activo el proceso de matrícula.
+
+                </li>
+
+                <li>
+                Seleccione las asignaturas que desee seguir y luego de confirmar la matrícula, verifique
+en la pantalla que la información de su matrícula esté conforme. A continuación, guarde la Ficha
+de Matrícula en su computadora.
+
+                </li>
+
+                <li>
+               Lea la Declaración Jurada que se adjunta en la ficha y asegúrese de marcar su
+conformidad.
+                </li>
+
+                <li>
+                Al elegir las asignaturas deberá tener en consideración:
+                <ul class="list-disc pl-6 mt-2 space-y-1">
+                    <li>Debe cumplir los requisitos que señala el plan de estudios de su especialidad para
+matricularse.  <a href="https://uevirtual.ue.edu.pe/intranet/index.php/servicios-academicos1/mallas-curriculares " target="_blank" class="text-green-600 underline font-semibold">
+             (Ver mallas curriculares)</a>      </li>
+                    
+
+
+
+
+
+<li><strong>No está permitido matricularse con cruce de horarios de clase.</strong> <a href="https://secretariageneral.esan.edu.pe/images/documentos/Reglamentos/Reglam_Estudios_de_Pregrado_29.01.2025.pdf" target="_blank" class="text-green-600 underline font-semibold">
+             (Reglamento de Estudios)</a>   </li>
+                </ul>
+                </li>
+
+
+
+
+                <li>
+               Si tuviera algún problema al momento de registrar la matrícula, le agradecemos reportar la
+incidencia a la siguiente dirección electrónica:
+
+<a href="mailto:soportematricula@ue.edu.pe" class="text-green-600 hover:underline font-semibold">
+        soportematricula@ue.edu.pe.
+    </a>
+                </li>
+
+            </ol>
+
+            <p class="font-semibold text-white">Matrícula Virtual</p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full border border-red-600 text-center">
+                    <thead class="bg-red-600 text-black">
+                        <tr>
+                            <th class="p-3 border border-red-600">FECHAS</th>
+                            <th class="p-3 border border-red-600">HORARIO</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-white">
+                        <tr>
+                            <td class="p-3 border border-red-600">Del jueves 5 al viernes 6 de marzo</td>
+                            <td class="p-3 border border-red-600">09:00 – 17:00 hrs</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border border-red-600">Del lunes 9 al martes 10 de marzo</td>
+                            <td class="p-3 border border-red-600">09:00 – 17:00 hrs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="font-semibold text-white mt-6">Matrícula Extemporánea Virtual</p>
+            <div class="overflow-x-auto">
+                <table class="w-full border border-red-600 text-center">
+                    <thead class="bg-red-600 text-black">
+                        <tr>
+                            <th class="p-3 border border-red-600">FECHA</th>
+                            <th class="p-3 border border-red-600">HORARIO</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-white">
+                        <tr>
+                            <td class="p-3 border border-red-600">Miércoles 11 de marzo </td>
+                            <td class="p-3 border border-red-600">10:00 – 17:00 hrs</td>
+                        </tr>
+                </tbody>
+                </table>
+            </div>
+
+
+<p class="font-semibold text-white">Pasos para la matrícula</p>
+
+<img src="https://i.ibb.co/hJPHN72K/Matricula-26-1.png"
+     alt="SECCIÓN MATRÍCULA"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+<img src="https://i.ibb.co/mLjrknV/PRIMER-PASO.png"
+     alt="Primer paso matrícula"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+
+<img src="https://i.ibb.co/jP5hbDQb/SEGUNDO-PASO.png"
+     alt="Segundo paso matrícula"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+
+<img src="https://i.ibb.co/RpXfT5pf/TERCER-PASO.png"
+     alt="Tercer paso matrícula"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+
+        </div>
+    </div>`
+},
+
+            // III. ESCALAS DE PAGO
+           III: {
+    title: "III. Escalas de Pago",
+    icon: "dollar-sign",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s] space-y-8">
+        <h2 class="text-3xl text-white font-serif">III. Escalas de Pago</h2>
+
+        <p class="text-slate-300">
+            La institución cuenta con <span class="text-green-600 font-semibold">cinco escalas de pago</span> para los derechos académicos. 
+            Cada escala define un valor por crédito académico.
+        </p>
+
+        <h3 class="text-xl text-red-600 font-semibold mb-3 font-serif">
+                        Tabla de escalas por crédito
+                    </h3>
+
+        <div class="overflow-hidden rounded-lg border border-slate-700">
+            <table class="w-full text-left text-slate-300">
+                <thead class="bg-slate-950 text-white uppercase text-xs">
+                    <tr>
+                        <th class="p-4">Escala</th>
+                        <th class="p-4 text-right">Valor crédito (S/.)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 bg-slate-900">
+                    <tr><td class="p-4 font-semibold">Escala H</td><td class="p-4 text-right text-red-600 font-mono text-lg">400.00</td></tr>
+                    <tr><td class="p-4 font-semibold">Escala I</td><td class="p-4 text-right text-red-600 font-mono text-lg">486.00</td></tr>
+                    <tr><td class="p-4 font-semibold">Escala J</td><td class="p-4 text-right text-red-600 font-mono text-lg">601.00</td></tr>
+                    <tr><td class="p-4 font-semibold">Escala K</td><td class="p-4 text-right text-red-600 font-mono text-lg">728.00</td></tr>
+                    <tr><td class="p-4 font-semibold">Escala L</td><td class="p-4 text-right text-red-600 font-mono text-lg">924.00</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>`
+},
+
+
+            // IV. COBROS
+IV: {
+    title: "IV. Cobros Académicos",
+    icon: "credit-card",
+    html: `
+    <div class="max-w-5xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">IV. Cobros por concepto de servicios académicos</h2>
+        
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+            <!-- Tarjeta: Derecho de matrícula -->
+            <div class="glass p-6 rounded-xl border-t-4 border-red-600">
+                <h3 class="text-slate-400 text-xs uppercase font-bold">Derecho de matrícula</h3>
+                <p class="text-3xl text-white font-bold my-2">S/ 375.00</p>
+                <p class="text-[11px] text-slate-400">
+                    Pago ÚNICO por semestre. Se cancela al inicio de cada periodo académico y no es reembolsable.
+                </p>
+            </div>
+
+            <!-- Tarjeta: Sistema de Boletas -->
+            <div class="col-span-2 glass p-6 rounded-xl">
+                <h3 class="text-white font-bold mb-4">Sistema de Boletas (Pensiones) - Fecha de Vencimiento</h3>
+
+                <div class="space-y-3 text-sm text-slate-300">
+
+                    <div class="grid grid-cols-3 border-b border-slate-700 pb-1">
+                        <span class="font-semibold">1ra boleta</span>
+                        <span>Matrícula + (Valor de 4 créditos académicos)</span>
+                        <span class="text-right text-white font-semibold">04 de Marzo</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 border-b border-slate-700 pb-1">
+                        <span class="font-semibold">2da boleta</span>
+                        <span>Valor de 5 créditos académicos</span>
+                        <span class="text-right text-white font-semibold">06 de Abril</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 pb-1">
+                        <span class="font-semibold">3ra, 4ta y 5ta boleta</span>
+                        <span>
+                            N° de créditos por pagar = (N° de créditos restantes) / 3 <br>
+                            Monto a pagar = (Valor del Crédito) * (N° de créditos por pagar)
+                        </span>
+<span class="text-right text-white font-semibold flex flex-col">
+    <span>05 de Mayo</span>
+    <span>05 de Junio</span>
+    <span>06 de Julio</span>
+</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <p class="text-xs text-slate-400 mb-4">
+            El pago de la boleta es requisito indispensable para efectuar la matrícula. 
+            Si el alumno accede a un descuento promocional, se aplican los lineamientos de descuento comercial vigentes.
+            Los costos indicados no incluyen separatas ni libros.
+        </p>
+        
+        <h3 class="text-white font-bold mb-4">Medios de pago</h3>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-sm">
+
+
+<div class="glass p-4 rounded-xl border-2 border-yellow-500/70">
+                <h4 class="font-bold text-white mb-1">VISA</h4>
+                <ul class="text-xs text-slate-300 list-disc pl-4 space-y-1">
+                    <li>Ruta: Inicio / Mi Portal / Enlaces / Pagos Visa.</li>
+                    <li>
+    También se puede ingresar a 
+    <a href="https://pagos.esan.edu.pe" 
+       target="_blank" 
+       class="underline font-bold">
+       pagos.esan.edu.pe
+    </a>.
+</li>                    
+<li>Ingresar código de alumno (SAP) y DNI.</li>
+                    <li>Pago con tarjeta de débito o crédito.</li>
+                </ul>
+            </div>
+
+
+            <div class="glass p-4 rounded-xl border-2 border-purple-500/70">
+                <h4 class="font-bold text-white mb-1">YAPE</h4>
+                <ul class="text-xs text-slate-300 list-disc pl-4 space-y-1">
+                    <li>Ingresar a la app Yape.</li>
+                    <li>Seleccionar "Yapear servicios" y luego "Educación".</li>
+                    <li>Elegir "ESAN" y el servicio "Pregrado soles".</li>
+                    <li>Ingresar código de alumno y elegir el recibo a pagar.</li>
+                </ul>
+            </div>
+
+            <div class="glass p-4 rounded-xl border-2 border-orange-500/70">
+                <h4 class="font-bold text-white mb-1">BCP</h4>
+                <ul class="text-xs text-slate-300 list-disc pl-4 space-y-1">
+                    <li>Seleccionar la opción "Pagar servicio".</li>
+                    <li>Servicio: Universidad ESAN / PREGRADO PENSIONES SOLES.</li>
+                    <li>Ingresar código de alumno y seleccionar la boleta.</li>
+                    <li>Código de agente para banca móvil y agentes: 02849.</li>
+                </ul>
+            </div>
+
+            <div class="glass p-4 rounded-xl border-2 border-blue-500/70">
+                <h4 class="font-bold text-white mb-1">BBVA</h4>
+                <ul class="text-xs text-slate-300 list-disc pl-4 space-y-1">
+                    <li>Opción "Pagar servicio".</li>
+                    <li>Servicio: UESAN PREGRADO PENSIONES SOL.</li>
+                    <li>Ingresar código de alumno y seleccionar la boleta.</li>
+                </ul>
+            </div>
+
+            
+        </div>
+
+
+
+<p class="text-slate-300">
+            Los pagos mediante agentes bancacios serán procesados 24 horas hábiles después de realizada la operación.
+        </p>
+<p class="text-slate-300">
+           Los pagos mediante transferencia interbancaria serán procesados 48 horas hábiles después de realizada la operación.
+        </p>
+
+<h3 class="text-white font-bold mb-2 mt-6">
+    Reportes a centrales de riesgo
+</h3>
+
+        <div class="bg-blue-900/20 p-4 rounded border border-blue-500/30 text-sm text-blue-200">
+            <i data-lucide="info" class="inline w-4 h-4 mr-2"></i>
+            En caso de incumplimiento en el pago de boletas vencidas, la Universidad ESAN puede iniciar acciones de 
+            recuperación de deuda, tercerizar la cobranza o transferir derechos de cobro a terceros, respetando la 
+            normativa de protección de datos personales. También está facultada a informar a las centrales de riesgo 
+            sobre dichos incumplimientos.
+        </div>
+    </div>`
+},
+
+
+
+
+// V. DESCUENTOS
+V: {
+    title: "V. Descuento",
+    icon: "percent",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">
+            V. Descuento por Pronto Pago – Semestre 2026-1
+        </h2>
+
+        <div class="glass p-8 rounded-xl space-y-6 text-slate-300">
+
+            <p class="text-lg">
+                A los estudiantes que deseen cancelar de forma anticipada el importe correspondiente
+                de la 2.ª a la 5.ª boleta del semestre académico se les otorgará un 
+                <strong class="text-green-400">descuento del 10%</strong> sobre el total a pagar.
+                Este beneficio deberá solicitarse previamente inscribiéndose en la plataforma virtual.
+            </p>
+
+<p class="text-lg">
+           El descuento de Pronto Pago no aplica a la primera boleta.
+        </p>
+
+            <p>
+                <strong class="text-white">Ruta de inscripción:</strong><br>
+                Inicio / Finanzas Pregrado / Pronto Pago / Compromiso de pronto pago.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-4 text-center text-sm text-slate-200">
+
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow">
+                    <p class="font-bold text-green-400 text-lg">Inscripción web</p>
+                    <p class="mt-2">Del 05 al 20 de marzo</p>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow">
+                    <p class="font-bold text-green-400 text-lg">Pago 1ª boleta regular</p>
+                    <p class="mt-2">Del 02 al 04 de marzo</p>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow">
+                    <p class="font-bold text-green-400 text-lg">Pago con pronto pago</p>
+                    <p class="mt-2">Del 24 al 27 de marzo</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>`
+},
+
+
+// VI. HORARIO Y TURNO DE MATRICULA
+VI: {
+    title: "VI. Horario y Turno",
+    icon: "calendar",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s] pt-10">
+
+        <div class="text-center mb-8">
+            <i data-lucide="calendar" class="w-16 h-16 text-blue-500 mx-auto mb-4"></i>
+            <h2 class="text-3xl text-white font-serif mb-4">
+                VI. Horarios y Turno de Matrícula - Semestre 2026-1
+            </h2>
+        </div>
+
+        <!-- HORARIO -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-red-500 mb-3">
+                Horario de Cursos
+            </h3>
+            <p class="text-white leading-relaxed">
+                El horario es un documento en formato Excel donde se detallan los días, 
+                horas, aulas y docentes de cada curso disponible para el semestre.
+            </p>
+            <p class="text-white leading-relaxed mt-3">
+                Este documento se publica en el Portal ESAN. Es fundamental revisarlo antes de tu matrícula para 
+                planificar correctamente tus cursos.
+            </p>
+            <p class="text-white leading-relaxed mt-3 font-semibold">
+                Eres responsable de verificar que en tu matrícula NO existan cruces 
+                de horarios de clases, prácticas ni exámenes. Recuerda tener varias opciones de horario.
+            </p>
+            <p class="text-white leading-relaxed mt-3 font-semibold">
+                Ruta: Ingresar a la UEvirtual → Servicios Académicos → Matrícula Virtual → Horarios
+            </p>
+
+<p class="font-semibold text-white">Ruta de referencia: Horario</p>
+
+<img src="https://i.postimg.cc/V6GDyFBd/horarios.png"
+     alt="Horario de Matrícula"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+
+        </div>
+
+
+        <!-- TURNO -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-red-500 mb-3">
+                Turno de Matrícula
+            </h3>
+            <p class="text-white leading-relaxed">
+                El turno de matrícula se asigna según el promedio ponderado del ciclo 
+                anterior y la cantidad de créditos aprobados acumulados. Este turno 
+                determina el orden de prioridad para el acceso al sistema.
+            </p>
+            <p class="text-white leading-relaxed mt-3">
+                Cuida estar presente el día y la hora asignados, ya que tendrás 
+                <strong>20 minutos</strong> para realizar tu matrícula. Optimiza tu tiempo.
+            </p>
+            <p class="text-white leading-relaxed mt-3">
+                Si pierdes tu turno, podrás matricularte en días posteriores; sin embargo, 
+                tendrás menor disponibilidad de cursos y horarios.
+            </p>
+            <p class="text-white leading-relaxed mt-3">
+                Ruta: Ingresar a la UEvirtual → Servicios Académicos → Matrícula Virtual → Turnos de Matrícula
+            </p>
+
+<p class="font-semibold text-white">Ruta de referencia: Turno</p>
+
+<img src="https://i.postimg.cc/1zMK6Kd8/turnos.png"
+     alt="Turno de Matrícula"
+     class="rounded-xl shadow-lg my-6 w-full border border-white/10">
+
+        </div>
+
+
+    </div>`
+},
+
+
+// VII. RETIROS
+VII: {
+    title: "VII. Retiros",
+    icon: "briefcase",
+    html: `
+    <div class="max-w-5xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">VII. Retiros</h2>
+
+        <div class="space-y-8">
+
+            <!-- RETIRO DE CURSO -->
+            <div class="glass p-6 rounded-xl border-t-4 border-red-500">
+                <h3 class="font-bold text-white text-lg mb-3">Retiro de curso</h3>
+
+                <p class="text-sm text-slate-300 mb-3">
+                    El alumno que se retire formalmente de uno o más cursos, deberá realizarlo mediante solicitud presentada 
+                    a Servicios Académicos hasta el 
+                    <strong>sábado 29 de mayo de 2026 (décima semana de actividades)</strong> hasta las 12:00 del mediodía.
+                </p>
+
+                <p class="text-sm text-slate-300 mb-4">
+                    Para efectos del retiro de uno o más cursos en el semestre, se aplicará un porcentaje de descuento según los siguientes plazos establecidos:
+                </p>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border border-slate-700">
+                        <thead class="bg-slate-800 text-slate-200">
+                            <tr>
+                                <th class="p-2 border border-slate-700">Envío de solicitud de retiro</th>
+                                <th class="p-2 border border-slate-700">Pagos comprometidos</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-300">
+                            <tr>
+                                <td class="p-2 border border-slate-700">Del 23/03/2026 al 16/05/2026</td>
+                                <td class="p-2 border border-slate-700">
+                                    Pagará el equivalente al 50% del valor de los créditos del curso retirado.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-700">A partir del 17/05/2026</td>
+                                <td class="p-2 border border-slate-700">
+                                    Pagará el total del valor de los créditos del curso retirado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RETIRO DE SEMESTRE -->
+            <div class="glass p-6 rounded-xl border-t-4 border-orange-500">
+                <h3 class="font-bold text-white text-lg mb-3">
+                    Retiro de Semestre <sup class="text-xs text-slate-400">1</sup>
+                </h3>
+
+                <p class="text-sm text-slate-300 mb-4">
+                    El retiro formal del semestre, se efectúa en los plazos, y compromete el pago
+                    de las boletas señaladas.
+                </p>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border border-slate-700">
+                        <thead class="bg-slate-800 text-slate-200">
+                            <tr>
+                                <th class="p-2 border border-slate-700">Envío de solicitud de retiro</th>
+                                <th class="p-2 border border-slate-700">Pagos comprometidos</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-300">
+                            <tr>
+                                <td class="p-2 border border-slate-700">Del 23/03/2026 al 06/04/2026</td>
+                                <td class="p-2 border border-slate-700">Pagará el total de la Primera Boleta</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-700">Del 07/04/2026 al 05/05/2026</td>
+                                <td class="p-2 border border-slate-700">Pagará el total de la Segunda Boleta</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-700">Del 06/05/2026 al 05/06/2026</td>
+                                <td class="p-2 border border-slate-700">Pagará el total de la Tercera Boleta</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-700">A partir del 06/06/2026</td>
+                                <td class="p-2 border border-slate-700">
+                                    Pagará el total de la Cuarta Boleta y Quinta Boleta
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RETIRO DEFINITIVO -->
+            <div class="glass p-6 rounded-xl border-t-4 border-slate-500">
+                <h3 class="font-bold text-white text-lg mb-3">
+                    Retiro definitivo <sup class="text-xs text-slate-400">2</sup>
+                </h3>
+
+                <p class="text-sm text-slate-300">
+                    El alumno que no desea continuar sus estudios en la Universidad deberá solicitar
+                    formalmente su retiro definitivo, debiendo previamente cancelar las boletas
+                    vencidas a la fecha de presentación de su solicitud.
+                </p>
+            </div>
+
+            <!-- NOTAS -->
+            <div class="text-[11px] text-slate-400 border-t border-slate-700 pt-4">
+                <p>
+                    <sup>1</sup> Según lo indicado en la Guía de Procedimientos Administrativos colgada en la UE virtual.
+                    Capítulo 2, Art. 2.5.
+                </p>
+                <p class="mt-1">
+                    <sup>2</sup> Según lo indicado en la Guía de Procedimientos Administrativos colgada en la UE virtual.
+                    Capítulo 2, Art. 2.6.
+                </p>
+            </div>
+
+        </div>
+    </div>`
+},
+
+
+// VIII. DIRECTORIO
+VIII: {
+    title: "VIII. Directorio",
+    icon: "phone",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s]">
+        <h2 class="text-3xl text-white font-serif mb-6">VIII. Directorio</h2>
+
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="glass p-4 rounded border-2 border-yellow-500/70 flex items-start gap-4">
+                <div class="bg-slate-900 p-3 rounded text-yellow-500">
+                    <i data-lucide="wallet"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Oficina de Finanzas</h4>
+                    <p class="text-xs text-slate-300">
+                        Correo: 
+                        <a href="mailto:finanzaspregrado@ue.edu.pe" class="text-white-600 hover:underline">
+                            finanzaspregrado@ue.edu.pe
+                        </a>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Teléfono: 317 7200 Opción 1 y luego opción 3
+                    </p>
+                   <p class="text-[11px] text-slate-400 mt-1">
+                        Horario de Atención: Lunes a viernes de 9:00 am - 6:00 pm
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass p-4 rounded border-2 border-blue-500/70 flex items-start gap-4">
+                <div class="bg-slate-900 p-3 rounded text-blue-500">
+                    <i data-lucide="book"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Oficina de Servicios Académicos</h4>
+                    <p class="text-xs text-slate-300">
+                        Correo: 
+                        <a href="mailto:ssacad@ue.edu.pe" class="text-white-600 hover:underline">
+                            ssacad@ue.edu.pe
+                        </a>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Teléfono: 317 7200 anexos 44203, 44204
+                    </p>
+
+                 <p class="text-[11px] text-slate-400 mt-1">
+                        Horario de Atención: Lunes a viernes de 8:00 am - 5:00 pm
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass p-4 rounded border-2 border-purple-500/70 flex items-start gap-4">
+                <div class="bg-slate-900 p-3 rounded text-purple-500">
+                    <i data-lucide="globe"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Centro de Idiomas</h4>
+                    <p class="text-xs text-slate-300">
+                        Correo: 
+                        <a href="mailto:matriculaidiomas@esan.edu.pe" class="text-white-600 hover:underline">
+                            matriculaidiomas@esan.edu.pe
+                        </a>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Teléfono: 317 7200 anexo 44874
+                    </p>
+                </div>
+            </div>
+
+
+<div class="glass p-4 rounded border-2 border-emerald-500/70 flex items-start gap-4">
+                <div class="bg-slate-900 p-3 rounded text-emerald-500">
+                    <i data-lucide="users"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Permanencia Estudiantil</h4>
+                    <p class="text-xs text-slate-300">
+                        Correo: 
+                        <a href="mailto:per_estudiantil@ue.edu.pe" class="text-white-600 hover:underline">
+                            per_estudiantil@ue.edu.pe
+                        </a>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Teléfono: +51 920133475
+                    </p>
+<p class="text-[11px] text-slate-400 mt-1">
+                        Horario de Atención: Lunes a viernes de 9:00 am - 6:00 pm
+                    </p>
+                </div>
+
+            </div>
+<p class="text-center text-sm text-slate-400 mt-10 tracking-wide">
+    Central telefónica ESAN University: 317 7200
+</p>
+
+    </div>`
+
+},
+
+// IX. CALENDARIO ACADÉMICO 2026-1
+IX: {
+    title: "IX. Calendario Académico 2026-1",
+    icon: "calendar",
+    html: `
+    <div class="max-w-4xl mx-auto animate-[fadeIn_0.5s] pb-10">
+        <h2 class="text-3xl text-white font-serif mb-6">IX. Calendario académico 2026-1 (1) </h2>
+
+        <div class="relative border-l border-slate-700 ml-4 space-y-6">
+
+<!-- 0. Pago de Primera Boleta -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span class="text-yellow-500 font-mono text-xs md:text-sm">
+                    Del 26 de febrero al 4 de marzo
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Pago de Primera Boleta
+                </h3>
+            </div>            
+
+
+
+
+<!-- 1. Matrícula virtual -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span class="text-blue-400 font-mono text-xs md:text-sm">
+                    Del jueves 5 al viernes 6 de marzo (09:00 a 17:00 hrs.) <br> Lunes 9 a martes 10 de marzo (09:00 a 17:00 hrs.)
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Matrícula virtual (de acuerdo con el orden por carrera, prioridad y horario publicado)
+                </h3>
+            </div>
+
+            <!-- 2. Matrícula extemporánea -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Miércoles 11 de marzo (10:00 a 17:00 hors.)
+                </span>
+                <h3 class="text-white font-semibold text-lg">Matrícula extemporánea</h3>
+            </div>
+
+            <!-- 3. Matrícula de alumnos ingresantes -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span class="text-yellow-500 font-mono text-xs md:text-sm">
+                    Lunes 16 de marzo
+                </span>
+                <h3 class="text-white font-semibold text-lg">Matrícula de alumnos ingresantes</h3>
+            </div>
+
+            <!-- 4. Inducción de estudiantes nuevos -->
+<div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Del 16 al 21 de marzo
+                </span>
+                <h3 class="text-white font-semibold text-lg">Inducción de estudiantes (solo para estudiantes nuevos)</h3>
+            </div>
+
+
+            <!-- 5. Matrícula extemporánea para alumnos nuevos (2) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Lunes 23 de marzo
+                </span>
+                <h3 class="text-white font-semibold text-lg">Matrícula extemporánea para alumnos nuevos (2)</h3>
+            </div>
+
+            <!-- 6. Inicio de clases -->
+<div class="relative pl-8">
+                <div class="bg-slate-800 p-4 rounded border border-red-500/30 ml-[-10px]">
+                    <span class="text-red-500 font-mono text-xs md:text-sm">
+                        Lunes 23 de marzo
+                    </span>
+                    <h3 class="text-white font-semibold text-lg">Inicio de clases</h3>
+                </div>
+            </div>
+
+            <!-- 7. Feriados del periodo (3) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-400 rounded-full"></div>
+                <span class="text-slate-200 font-mono text-xs md:text-sm">
+                    2 al 4 abril, 1 mayo, 29 junio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Feriados del periodo (3)</h3>
+                <p class="text-xs text-slate-400">
+                    Del jueves 2 al sábado 4 de abril (Semana Santa) <br> Viernes 1 de mayo (Día del Trabajor) <br> Lunes 29 de junio (San Pedro y San Pablo).
+                </p>
+            </div>
+
+            <!-- 8. Plazo límite para retiro de curso -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Viernes 29 de mayo
+                </span>
+                <h3 class="text-white font-semibold text-lg">Plazo límite para retiro de curso</h3>
+                <p class="text-xs text-slate-400">Hasta las 12:00 hrs.</p>
+            </div>
+
+            <!-- 9. Fecha límite para presentar la solicitud de cambio de carrera -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Viernes 26 de junio
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Fecha límite para presentar la solicitud de cambio de carrera
+                </h3>
+                <p class="text-xs text-slate-400">Hasta las 12:00 hrs.</p>
+            </div>
+
+            <!-- 10. Plazo límite para retiro de ciclo -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span class="text-slate-300 font-mono text-xs md:text-sm">
+                    Viernes 26 de junio 
+                </span>
+                <h3 class="text-white font-semibold text-lg">Plazo límite para retiro de ciclo</h3>
+                <p class="text-xs text-slate-400">Hasta las 17:00 hrs.</p>
+            </div>
+
+<!-- 11. Semana de Evaluaciones Finales (4) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span class="text-blue-300 font-mono text-xs md:text-sm">
+                    Del 30 de junio al 6 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Semana de Evaluaciones Finales (4)</h3>
+            </div>
+
+<!-- 12. Semana de Devolución de Evaluaciones Finales -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span class="text-blue-200 font-mono text-xs md:text-sm">
+                    Del 7 al 11 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Semana de Devolución de Evaluaciones Finales</h3>
+            </div>
+
+
+            <!-- 13. Último día de clases -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
+                <span class="text-red-400 font-mono text-xs md:text-sm">
+                    Sábabado 11 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Último día de clases</h3>
+            </div>
+
+            <!-- 14. Evaluaciones de Rezagados (5) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span class="text-blue-300 font-mono text-xs md:text-sm">
+                    Del 8 al 10 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Evaluaciones de Rezagados (5)</h3>
+                <p class="text-xs text-slate-400">
+                    Según horarios programados y publicados en la UE virtual.
+                </p>
+            </div>
+
+<!-- 15. Devolución de Evaluaciones de Rezagados -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span class="text-blue-200 font-mono text-xs md:text-sm">
+                    Lunes 13 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">Devolución de Evaluaciones de Rezagados</h3>
+            </div>
+
+<!-- 16. Publicación de primera revisión de evaluación final y evaluaciones a rezagados (6) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span class="text-blue-200 font-mono text-xs md:text-sm">
+                    Martes 14 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Publicación de primera revisión de evaluación final y evaluaciones de rezagados (6)
+                </h3>
+            </div>
+
+<!-- 17. Plazo para la presentación de solicitudes de segunda revisión de evaluación final y evaluaciones de rezagados  -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span class="text-blue-200 font-mono text-xs md:text-sm">
+                    Miércoles 15 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Plazo para la presentación de solicitudes de segunda revisión de evaluación final y evaluación de rezagados
+                </h3>
+                <p class="text-xs text-slate-400">
+                    A partir de las 09:00 hrs. hasta las 18:00 hrs.
+                </p>
+            </div>
+
+
+
+            <!-- 18. Publicación de segunda revisión de evaluación final y evaluaciones de rezagados -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span class="text-yellow-500 font-mono text-xs md:text-sm">
+                    Viernes 17 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Publicación de segunda revisión de evaluación final y evaluaciones de rezagados
+                </h3>
+<p class="text-xs text-slate-400">
+                    A partir de las 20:00 hrs.
+                </p>
+            </div>
+
+            <!-- 19. Cierre de actas del periodo 2026-1 (7) -->
+            <div class="relative pl-8">
+                <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span class="text-yellow-500 font-mono text-xs md:text-sm">
+                    Lunes 20 de julio
+                </span>
+                <h3 class="text-white font-semibold text-lg">
+                    Cierre de actas del periodo 2026-1 (7)
+                </h3>
+            </div>
+
+        </div>
+
+        <div class="bg-slate-900/60 p-4 rounded border border-slate-700 text-xs text-slate-300 space-y-1 mt-8">
+            <p>(1) Este calendario podrá ser ajustado de acuerdo con las disposiciones de la Universidad.</p>
+            <p>(2) Excepcionalmente, se permitirá una matrícula extemporánea de alumnos ingresantes hasta el 30 de marzo.</p>
+            <p>(3) Durante los feriados del periodo se suspenden todas las actividades académicas y de complemento curricular.</p>
+<p>(4) Durante la semana de evaluaciones finales se suspenden las clases.</p>
+<p>(5) Sólo para aquellos alumnos que reciban la confirmación de autorización para la evaluación de rezagados.</p>
+            <p>(6) Las solicitudes de primer y segundo reclamo se presentan de acuerdo con el procedimiento establecido por la oficina de Servicios Académicos. No se aceptan solicitudes fuera de la fecha.</p>
+            <p>(7) Se suspende la atención a alumnos desde el 25 de julio al 1 de agosto de 2026.</p>
+            
+        </div>
+    </div>`
+}
+};
+
+
+          
+        // --- NAVEGACIÓN ---
+function renderMenu() {
+    const container = document.getElementById('menu-container');
+
+    if (!container || !db) return;
+
+    const keys = Object.keys(db).filter(k => k !== 'welcome');
+
+    container.innerHTML = keys.map(key => `
+        <button 
+            onclick="renderContent('${key}')" 
+            id="btn-${key}" 
+            class="w-full text-left px-6 py-3 text-slate-300 text-[13px] font-semibold tracking-wide hover:text-white hover:bg-slate-800 transition flex items-center gap-3">
+            <i data-lucide="${db[key].icon || 'file'}" class="w-4 h-4"></i> 
+            ${db[key].title}
+        </button>
+    `).join('');
+
+    lucide.createIcons();
+}
+
+function renderContent(key) {
+    const viewer = document.getElementById('viewer');
+
+    if (!viewer || !db[key]) {
+        console.warn("Sección no encontrada:", key);
+        return;
+    }
+
+    viewer.innerHTML = db[key].html;
+
+    // Activar botón actual
+    document.querySelectorAll('#menu-container button')
+        .forEach(b => b.classList.remove('active-tab'));
+
+    const btn = document.getElementById(`btn-${key}`);
+    if (btn) btn.classList.add('active-tab');
+
+    lucide.createIcons();
+    viewer.scrollTop = 0;
+}
+
+// Buscador
+document.getElementById('search').addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+
+    if (val.length < 3) return;
+
+    const map = {
+        'matr': 'I',
+        'pago': 'II',
+        'cost': 'II',
+        'cobr': 'III',
+        'desc': 'IV',
+        'conv': 'V',
+        'hora': 'VI',
+        'turn': 'VI',
+        'reti': 'VII',
+        'exam': 'VIII',
+        'exten': 'IX',
+        'ingl': 'X',
+        'tram': 'XI',
+        'dire': 'XII',
+        'cale': 'XIII',
+        'fecha': 'XIII'
+    };
+
+    for (let k in map) {
+        if (val.includes(k) && db[map[k]]) {
+            renderContent(map[k]);
+            break;
+        }
+    }
+});
+
+
+        // Iniciar
+document.addEventListener("DOMContentLoaded", () => {
+    renderMenu();
+    renderContent('welcome');
+});
+
+    </script>
+</body>
+</html>
